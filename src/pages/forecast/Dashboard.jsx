@@ -1,10 +1,17 @@
 import { useState } from "react";
 
-function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease }) {
+function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="border border-gray-100 rounded-lg p-3 hover:border-gray-200 transition">
+    <div
+      className="border border-gray-100 rounded-lg p-3 hover:border-gray-200 transition"
+      style={{
+        animation: "fadeSlideIn 0.3s ease forwards",
+        animationDelay: `${Math.min(index * 0.03, 0.5)}s`,
+        opacity: 0,
+      }}
+    >
       {/* Main row */}
       <div className="flex justify-between items-start mb-1.5">
         <div>
@@ -34,7 +41,7 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease }) {
         className={`w-full rounded-full h-2 ${isIncrease ? "bg-blue-50" : "bg-red-50"}`}
       >
         <div
-          className={`h-2 rounded-full transition-all ${isIncrease ? "bg-blue-500" : "bg-red-400"}`}
+          className={`h-2 rounded-full bar-animate ${isIncrease ? "bg-blue-500" : "bg-red-400"}`}
           style={{ width: `${Math.min((Math.abs(pct) / maxPct) * 100, 100)}%` }}
         />
       </div>
@@ -43,9 +50,11 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease }) {
         <span>{diff}</span>
       </div>
 
-      {/* Expanded detail table */}
       {expanded && (
-        <div className="mt-3 border-t border-gray-100 pt-3 overflow-x-auto">
+        <div
+          className="mt-3 border-t border-gray-100 pt-3 overflow-x-auto"
+          style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0 }}
+        >
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-100">
@@ -68,7 +77,14 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease }) {
             </thead>
             <tbody>
               {r.monthData.map((md, i) => (
-                <tr key={i} className="border-b border-gray-50 last:border-0">
+                <tr
+                  key={i}
+                  className="border-b border-gray-50 last:border-0"
+                  style={{
+                    animation: "fadeIn 0.3s ease forwards",
+                    opacity: 0,
+                  }}
+                >
                   <td className="py-1.5 text-gray-600 font-medium">
                     {md.month}
                   </td>
@@ -125,11 +141,9 @@ export default function Dashboard({ allRows }) {
       (r) => r.maxPct > 0 && !(r.maxPct === 100 && r.bestMonth?.prev === 0),
     )
     .sort((a, b) => {
-      // if both are 100%, sort by highest curr volume first
       if (a.maxPct === 100 && b.maxPct === 100) {
         return (b.bestMonth?.curr || 0) - (a.bestMonth?.curr || 0);
       }
-      // otherwise sort by highest % first
       return b.maxPct - a.maxPct;
     })
     .slice(0, 200);
@@ -140,7 +154,9 @@ export default function Dashboard({ allRows }) {
       const worstMonth = r.monthData.find((md) => md.pct === minPct);
       return { ...r, minPct, worstMonth };
     })
-    .filter((r) => r.minPct < 0)
+    .filter(
+      (r) => r.minPct < 0 && !(r.minPct === -100 && r.worstMonth?.curr === 0),
+    )
     .sort((a, b) => {
       if (a.minPct === -100 && b.minPct === -100) {
         return (b.worstMonth?.prev || 0) - (a.worstMonth?.prev || 0);
@@ -169,6 +185,7 @@ export default function Dashboard({ allRows }) {
             {topIncreases.map((r, i) => (
               <MoverCard
                 key={i}
+                index={i}
                 r={r}
                 isIncrease={true}
                 pct={r.maxPct}
@@ -186,7 +203,7 @@ export default function Dashboard({ allRows }) {
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 mb-5">
           <span className="w-2.5 h-2.5 rounded-full bg-red-400 inline-block"></span>
-          <h3 className="text-sm font-semibold text-gray-700">Top 200 Drops</h3>
+          <h3 className="text-sm font-semibold text-gray-700">Top 50 Drops</h3>
         </div>
         {topDrops.length === 0 ? (
           <p className="text-sm text-gray-400">No drops found</p>
@@ -195,6 +212,7 @@ export default function Dashboard({ allRows }) {
             {topDrops.map((r, i) => (
               <MoverCard
                 key={i}
+                index={i}
                 r={r}
                 isIncrease={false}
                 pct={r.minPct}

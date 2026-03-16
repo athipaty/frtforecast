@@ -17,9 +17,12 @@ export default function TableView({ allRows, months }) {
     .sort((a, b) => b.hasAlert - a.hasAlert || a.customer.localeCompare(b.customer));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 page-enter">
       {/* Filters */}
-      <div className="flex gap-3 flex-wrap items-center">
+      <div
+        className="flex gap-3 flex-wrap items-center"
+        style={{ animation: 'fadeSlideIn 0.3s ease forwards', opacity: 0 }}
+      >
         <select
           value={filterCust}
           onChange={e => setFilterCust(e.target.value)}
@@ -41,7 +44,10 @@ export default function TableView({ allRows, months }) {
         <span className="text-xs text-gray-400 ml-auto">{rows.length} rows</span>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+      <div
+        className="bg-white rounded-xl border border-gray-200 overflow-x-auto"
+        style={{ animation: 'fadeSlideIn 0.4s ease forwards', animationDelay: '0.1s', opacity: 0 }}
+      >
         <table className="w-full text-xs">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">
@@ -65,7 +71,15 @@ export default function TableView({ allRows, months }) {
           </thead>
           <tbody>
             {rows.map((r, i) => (
-              <tr key={i} className={`border-b border-gray-50 hover:bg-blue-50/30 transition ${r.hasAlert ? 'bg-amber-50/30' : ''}`}>
+              <tr
+                key={i}
+                className={`border-b border-gray-50 hover:bg-blue-50 transition-colors ${r.hasAlert ? 'bg-amber-50' : ''}`}
+                style={{
+                  animation: 'fadeSlideIn 0.3s ease forwards',
+                  animationDelay: `${Math.min(i * 0.02, 0.4)}s`,
+                  opacity: 0
+                }}
+              >
                 <td className="px-4 py-2.5 font-medium text-gray-700">{r.customer}</td>
                 <td className="px-4 py-2.5 font-mono text-gray-500">{r.partNo}</td>
                 {r.monthData.map((md, j) => (
@@ -76,7 +90,12 @@ export default function TableView({ allRows, months }) {
                       {md.prev === 0 && md.curr === 0 ? (
                         <span className="text-gray-300">—</span>
                       ) : (
-                        <span className={`inline-block px-1.5 py-0.5 rounded-full font-medium ${md.alert ? 'bg-amber-100 text-amber-700' : md.diff > 0 ? 'bg-blue-100 text-blue-700' : md.diff < 0 ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'}`}>
+                        <span className={`inline-block px-1.5 py-0.5 rounded-full font-medium ${
+                          md.alert ? 'bg-amber-100 text-amber-700' :
+                          md.diff > 0 ? 'bg-blue-100 text-blue-700' :
+                          md.diff < 0 ? 'bg-red-100 text-red-600' :
+                          'bg-gray-100 text-gray-500'
+                        }`}>
                           {md.pct >= 0 ? '+' : ''}{md.pct}%
                         </span>
                       )}

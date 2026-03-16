@@ -1,4 +1,4 @@
-import ForecastCompare from './pages/ForecastCompare';
+import ForecastCompare from './pages/forecast/index.jsx';
 
 export default function App() {
   return <ForecastCompare />;

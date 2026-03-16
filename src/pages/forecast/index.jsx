@@ -100,8 +100,8 @@ export default function ForecastCompare() {
 
         <nav className="flex-1 px-2 py-3 space-y-1">
           {[
-            { key: "upload", icon: "⬆", label: "Upload" },
-            { key: "dashboard", icon: "📊", label: "Dashboard" },
+            { key: "upload", icon: "", label: "Upload" },
+            { key: "dashboard", icon: "", label: "Dashboard" },
           ].map((item) => (
             <button
               key={item.key}
@@ -177,7 +177,7 @@ export default function ForecastCompare() {
             <div className="page-enter">
               {!result ? (
                 <div className="flex flex-col items-center justify-center h-full text-center py-24">
-                  <div className="text-5xl mb-4">📊</div>
+                  <div className="text-5xl mb-4"></div>
                   <h2 className="text-base font-semibold text-gray-700 mb-2">No comparison yet</h2>
                   <p className="text-sm text-gray-400">Go to Upload and compare two forecasts first.</p>
                   <button

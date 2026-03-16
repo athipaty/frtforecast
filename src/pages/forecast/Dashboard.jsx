@@ -121,7 +121,9 @@ export default function Dashboard({ allRows }) {
       const bestMonth = r.monthData.find((md) => md.pct === maxPct);
       return { ...r, maxPct, bestMonth };
     })
-    .filter((r) => r.maxPct > 0)
+    .filter(
+      (r) => r.maxPct > 0 && !(r.maxPct === 100 && r.bestMonth?.prev === 0),
+    )
     .sort((a, b) => {
       // if both are 100%, sort by highest curr volume first
       if (a.maxPct === 100 && b.maxPct === 100) {
@@ -130,7 +132,7 @@ export default function Dashboard({ allRows }) {
       // otherwise sort by highest % first
       return b.maxPct - a.maxPct;
     })
-    .slice(0, 50);
+    .slice(0, 200);
 
   const topDrops = [...allRows]
     .map((r) => {
@@ -139,20 +141,25 @@ export default function Dashboard({ allRows }) {
       return { ...r, minPct, worstMonth };
     })
     .filter((r) => r.minPct < 0)
-    .sort((a, b) => a.minPct - b.minPct)
+    .sort((a, b) => {
+      if (a.minPct === -100 && b.minPct === -100) {
+        return (b.worstMonth?.prev || 0) - (a.worstMonth?.prev || 0);
+      }
+      return a.minPct - b.minPct;
+    })
     .slice(0, 50);
 
   const maxIncrease = topIncreases[0]?.maxPct || 100;
   const maxDrop = Math.abs(topDrops[0]?.minPct || 100);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 gap-6">
       {/* Top Increases */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 mb-5">
           <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
           <h3 className="text-sm font-semibold text-gray-700">
-            Top 50 Increases
+            Top 200 Increases
           </h3>
         </div>
         {topIncreases.length === 0 ? (
@@ -179,7 +186,7 @@ export default function Dashboard({ allRows }) {
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 mb-5">
           <span className="w-2.5 h-2.5 rounded-full bg-red-400 inline-block"></span>
-          <h3 className="text-sm font-semibold text-gray-700">Top 50 Drops</h3>
+          <h3 className="text-sm font-semibold text-gray-700">Top 200 Drops</h3>
         </div>
         {topDrops.length === 0 ? (
           <p className="text-sm text-gray-400">No drops found</p>

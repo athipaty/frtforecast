@@ -104,18 +104,6 @@ export default function ForecastCompare() {
 
   const allRows = result?.rows || [];
   const alertCount = allRows.filter((r) => r.hasAlert).length;
-  const totalPrev = allRows.reduce(
-    (s, r) => s + r.monthData.reduce((ss, md) => ss + md.prev, 0),
-    0,
-  );
-  const totalCurr = allRows.reduce(
-    (s, r) => s + r.monthData.reduce((ss, md) => ss + md.curr, 0),
-    0,
-  );
-  const totalPct =
-    totalPrev === 0
-      ? 0
-      : Math.round(((totalCurr - totalPrev) / totalPrev) * 100);
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -247,42 +235,6 @@ export default function ForecastCompare() {
                       </span>
                     </div>
                   )}
-
-                  {/* Summary cards */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {[
-                      {
-                        label: "Parts compared",
-                        value: allRows.length,
-                        cls: "text-gray-800",
-                      },
-                      {
-                        label: "Total previous qty",
-                        value: totalPrev.toLocaleString(),
-                        cls: "text-gray-800",
-                      },
-                      {
-                        label: "Total current qty",
-                        value: totalCurr.toLocaleString(),
-                        cls: "text-gray-800",
-                      },
-                      {
-                        label: "Overall change",
-                        value: `${totalPct >= 0 ? "+" : ""}${totalPct}%`,
-                        cls: totalPct >= 0 ? "text-blue-600" : "text-red-500",
-                      },
-                    ].map(({ label, value, cls }) => (
-                      <div
-                        key={label}
-                        className="bg-white border border-gray-200 rounded-xl p-4"
-                      >
-                        <p className="text-xs text-gray-400 mb-1">{label}</p>
-                        <p className={`text-2xl font-semibold ${cls}`}>
-                          {value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
 
                   <Dashboard allRows={allRows} />
                 </div>

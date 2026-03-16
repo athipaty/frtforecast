@@ -153,7 +153,7 @@ export default function Dashboard({ allRows }) {
   const maxDrop = Math.abs(topDrops[0]?.minPct || 100);
 
   return (
-    <div className="grid grid-cols-1 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Top Increases */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 mb-5">

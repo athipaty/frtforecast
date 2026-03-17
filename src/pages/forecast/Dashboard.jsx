@@ -139,7 +139,22 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
                   {r.monthData.reduce((s, md) => s + md.diff, 0) > 0 ? '+' : ''}
                   {r.monthData.reduce((s, md) => s + md.diff, 0).toLocaleString()}
                 </td>
-                <td className="py-2 text-right text-xs text-gray-400">—</td>
+                <td className="py-2 text-right text-xs">
+  {(() => {
+    const totalPrev = r.monthData.reduce((s, md) => s + md.prev, 0);
+    const totalCurr = r.monthData.reduce((s, md) => s + md.curr, 0);
+    const totalPct = totalPrev === 0 ? 0 : Math.round(((totalCurr - totalPrev) / totalPrev) * 100);
+    return (
+      <span className={`inline-block px-1.5 py-0.5 rounded-full font-semibold ${
+        totalPct > 0 ? 'bg-blue-100 text-blue-700' :
+        totalPct < 0 ? 'bg-red-100 text-red-600' :
+        'bg-gray-100 text-gray-500'
+      }`}>
+        {totalPct >= 0 ? '+' : ''}{totalPct}%
+      </span>
+    );
+  })()}
+</td>
               </tr>
             </tfoot>
           </table>

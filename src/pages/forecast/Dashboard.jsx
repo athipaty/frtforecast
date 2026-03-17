@@ -16,9 +16,23 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
       <div className="flex justify-between items-start mb-1.5">
         <div>
           <p className="text-sm font-semibold text-gray-800">{r.partNo}</p>
-          <p className="text-xs text-gray-400">
-            {r.customer} · {month}
-          </p>
+         <p className="text-xs text-gray-400 flex items-center gap-2">
+  {r.customer} · {month}
+  {(() => {
+    const totalPrev = r.monthData.reduce((s, md) => s + md.prev, 0);
+    const totalCurr = r.monthData.reduce((s, md) => s + md.curr, 0);
+    const totalPct = totalPrev === 0 ? 0 : Math.round(((totalCurr - totalPrev) / totalPrev) * 100);
+    return (
+      <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-medium ${
+        totalPct > 0 ? 'bg-blue-100 text-blue-600' :
+        totalPct < 0 ? 'bg-red-100 text-red-500' :
+        'bg-gray-100 text-gray-400'
+      }`}>
+        Total {totalPct >= 0 ? '+' : ''}{totalPct}%
+      </span>
+    );
+  })()}
+</p>
         </div>
         <div className="flex items-center gap-2 ml-3">
           <span

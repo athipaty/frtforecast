@@ -123,6 +123,25 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
                 </tr>
               ))}
             </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-gray-200 bg-gray-50">
+                <td className="py-2 text-gray-700 font-semibold text-xs">Total</td>
+                <td className="py-2 text-right text-gray-600 font-semibold text-xs">
+                  {r.monthData.reduce((s, md) => s + md.prev, 0).toLocaleString()}
+                </td>
+                <td className="py-2 text-right text-gray-800 font-semibold text-xs">
+                  {r.monthData.reduce((s, md) => s + md.curr, 0).toLocaleString()}
+                </td>
+                <td className={`py-2 text-right font-semibold text-xs ${
+                  r.monthData.reduce((s, md) => s + md.diff, 0) > 0 ? 'text-blue-500' :
+                  r.monthData.reduce((s, md) => s + md.diff, 0) < 0 ? 'text-red-400' : 'text-gray-300'
+                }`}>
+                  {r.monthData.reduce((s, md) => s + md.diff, 0) > 0 ? '+' : ''}
+                  {r.monthData.reduce((s, md) => s + md.diff, 0).toLocaleString()}
+                </td>
+                <td className="py-2 text-right text-xs text-gray-400">—</td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       )}

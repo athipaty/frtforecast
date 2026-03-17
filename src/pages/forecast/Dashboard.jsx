@@ -1,46 +1,40 @@
 import { useState } from "react";
 
-function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
+function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index, totalPct }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
     <div
       className="border border-gray-100 rounded-lg p-3 hover:border-gray-200 transition"
       style={{
-        animation: "fadeSlideIn 0.3s ease forwards",
+        animation: 'fadeSlideIn 0.3s ease forwards',
         animationDelay: `${Math.min(index * 0.03, 0.5)}s`,
-        opacity: 0,
+        opacity: 0
       }}
     >
       {/* Main row */}
       <div className="flex justify-between items-start mb-1.5">
         <div>
           <p className="text-sm font-semibold text-gray-800">{r.partNo}</p>
-         <p className="text-xs text-gray-400 flex items-center gap-2">
-  {r.customer} · {month}
-  {(() => {
-    const totalPrev = r.monthData.reduce((s, md) => s + md.prev, 0);
-    const totalCurr = r.monthData.reduce((s, md) => s + md.curr, 0);
-    const totalPct = totalPrev === 0 ? 0 : Math.round(((totalCurr - totalPrev) / totalPrev) * 100);
-    return (
-      <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-medium ${
-        totalPct > 0 ? 'bg-blue-100 text-blue-600' :
-        totalPct < 0 ? 'bg-red-100 text-red-500' :
-        'bg-gray-100 text-gray-400'
-      }`}>
-        Total {totalPct >= 0 ? '+' : ''}{totalPct}%
-      </span>
-    );
-  })()}
-</p>
+          <p className="text-xs text-gray-400 flex items-center gap-2 flex-wrap">
+            {r.customer} · {month}
+            <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-medium ${
+              totalPct > 0 ? 'bg-blue-100 text-blue-600' :
+              totalPct < 0 ? 'bg-red-100 text-red-500' :
+              'bg-gray-100 text-gray-400'
+            }`}>
+              Total {totalPct >= 0 ? '+' : ''}{totalPct}%
+            </span>
+          </p>
         </div>
         <div className="flex items-center gap-2 ml-3">
-          <span
-            className={`text-sm font-bold ${isIncrease ? "text-blue-600" : "text-red-500"}`}
-          >
-            {isIncrease ? "+" : ""}
-            {pct}%
-          </span>
+          <div className="text-right">
+            <p className="text-xs text-gray-400 mb-0.5">
+              Month <span className={`font-bold ${isIncrease ? "text-blue-600" : "text-red-500"}`}>
+                {isIncrease ? "+" : ""}{pct}%
+              </span>
+            </p>
+          </div>
           <button
             onClick={() => setExpanded((v) => !v)}
             className="text-xs text-gray-400 hover:text-gray-600 border border-gray-200 rounded px-2 py-0.5 transition"
@@ -51,12 +45,10 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
       </div>
 
       {/* Progress bar */}
-      <div
-        className={`w-full rounded-full h-2 ${isIncrease ? "bg-blue-50" : "bg-red-50"}`}
-      >
+      <div className={`w-full rounded-full h-2 ${isIncrease ? "bg-blue-50" : "bg-red-50"}`}>
         <div
           className={`h-2 rounded-full bar-animate ${isIncrease ? "bg-blue-500" : "bg-red-400"}`}
-          style={{ width: `${Math.min((Math.abs(pct) / maxPct) * 100, 100)}%` }}
+          style={{ width: `${Math.min((Math.abs(totalPct) / maxPct) * 100, 100)}%` }}
         />
       </div>
       <div className="flex justify-between text-xs text-gray-400 mt-1">
@@ -64,29 +56,20 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
         <span>{diff}</span>
       </div>
 
+      {/* Expanded detail table */}
       {expanded && (
         <div
           className="mt-3 border-t border-gray-100 pt-3 overflow-x-auto"
-          style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0 }}
+          style={{ animation: 'fadeIn 0.3s ease forwards', opacity: 0 }}
         >
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left py-1.5 text-gray-400 font-medium">
-                  Month
-                </th>
-                <th className="text-right py-1.5 text-gray-400 font-medium">
-                  Previous
-                </th>
-                <th className="text-right py-1.5 text-gray-400 font-medium">
-                  Current
-                </th>
-                <th className="text-right py-1.5 text-gray-400 font-medium">
-                  Diff
-                </th>
-                <th className="text-right py-1.5 text-gray-400 font-medium">
-                  Var%
-                </th>
+                <th className="text-left py-1.5 text-gray-400 font-medium">Month</th>
+                <th className="text-right py-1.5 text-gray-400 font-medium">Previous</th>
+                <th className="text-right py-1.5 text-gray-400 font-medium">Current</th>
+                <th className="text-right py-1.5 text-gray-400 font-medium">Diff</th>
+                <th className="text-right py-1.5 text-gray-400 font-medium">Var%</th>
               </tr>
             </thead>
             <tbody>
@@ -95,42 +78,28 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
                   key={i}
                   className="border-b border-gray-50 last:border-0"
                   style={{
-                    animation: "fadeIn 0.3s ease forwards",
+                    animation: 'fadeIn 0.3s ease forwards',
                     opacity: 0,
+                    animationDelay: `${i * 0.04}s`
                   }}
                 >
-                  <td className="py-1.5 text-gray-600 font-medium">
-                    {md.month}
-                  </td>
-                  <td className="py-1.5 text-right text-gray-400">
-                    {md.prev ? md.prev.toLocaleString() : "—"}
-                  </td>
-                  <td className="py-1.5 text-right text-gray-700 font-medium">
-                    {md.curr ? md.curr.toLocaleString() : "—"}
-                  </td>
-                  <td
-                    className={`py-1.5 text-right font-medium ${md.diff > 0 ? "text-blue-500" : md.diff < 0 ? "text-red-400" : "text-gray-300"}`}
-                  >
-                    {md.diff > 0 ? "+" : ""}
-                    {md.diff ? md.diff.toLocaleString() : "—"}
+                  <td className="py-1.5 text-gray-600 font-medium">{md.month}</td>
+                  <td className="py-1.5 text-right text-gray-400">{md.prev ? md.prev.toLocaleString() : "—"}</td>
+                  <td className="py-1.5 text-right text-gray-700 font-medium">{md.curr ? md.curr.toLocaleString() : "—"}</td>
+                  <td className={`py-1.5 text-right font-medium ${md.diff > 0 ? "text-blue-500" : md.diff < 0 ? "text-red-400" : "text-gray-300"}`}>
+                    {md.diff > 0 ? "+" : ""}{md.diff ? md.diff.toLocaleString() : "—"}
                   </td>
                   <td className="py-1.5 text-right">
                     {md.prev === 0 && md.curr === 0 ? (
                       <span className="text-gray-300">—</span>
                     ) : (
-                      <span
-                        className={`inline-block px-1.5 py-0.5 rounded-full font-medium ${
-                          md.alert
-                            ? "bg-amber-100 text-amber-700"
-                            : md.diff > 0
-                              ? "bg-blue-100 text-blue-700"
-                              : md.diff < 0
-                                ? "bg-red-100 text-red-600"
-                                : "bg-gray-100 text-gray-500"
-                        }`}
-                      >
-                        {md.pct >= 0 ? "+" : ""}
-                        {md.pct}%
+                      <span className={`inline-block px-1.5 py-0.5 rounded-full font-medium ${
+                        md.alert ? "bg-amber-100 text-amber-700" :
+                        md.diff > 0 ? "bg-blue-100 text-blue-700" :
+                        md.diff < 0 ? "bg-red-100 text-red-600" :
+                        "bg-gray-100 text-gray-500"
+                      }`}>
+                        {md.pct >= 0 ? "+" : ""}{md.pct}%
                       </span>
                     )}
                   </td>
@@ -148,27 +117,21 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
                 </td>
                 <td className={`py-2 text-right font-semibold text-xs ${
                   r.monthData.reduce((s, md) => s + md.diff, 0) > 0 ? 'text-blue-500' :
-                  r.monthData.reduce((s, md) => s + md.diff, 0) < 0 ? 'text-red-400' : 'text-gray-300'
+                  r.monthData.reduce((s, md) => s + md.diff, 0) < 0 ? 'text-red-400' :
+                  'text-gray-300'
                 }`}>
                   {r.monthData.reduce((s, md) => s + md.diff, 0) > 0 ? '+' : ''}
                   {r.monthData.reduce((s, md) => s + md.diff, 0).toLocaleString()}
                 </td>
                 <td className="py-2 text-right text-xs">
-  {(() => {
-    const totalPrev = r.monthData.reduce((s, md) => s + md.prev, 0);
-    const totalCurr = r.monthData.reduce((s, md) => s + md.curr, 0);
-    const totalPct = totalPrev === 0 ? 0 : Math.round(((totalCurr - totalPrev) / totalPrev) * 100);
-    return (
-      <span className={`inline-block px-1.5 py-0.5 rounded-full font-semibold ${
-        totalPct > 0 ? 'bg-blue-100 text-blue-700' :
-        totalPct < 0 ? 'bg-red-100 text-red-600' :
-        'bg-gray-100 text-gray-500'
-      }`}>
-        {totalPct >= 0 ? '+' : ''}{totalPct}%
-      </span>
-    );
-  })()}
-</td>
+                  <span className={`inline-block px-1.5 py-0.5 rounded-full font-semibold ${
+                    totalPct > 0 ? 'bg-blue-100 text-blue-700' :
+                    totalPct < 0 ? 'bg-red-100 text-red-600' :
+                    'bg-gray-100 text-gray-500'
+                  }`}>
+                    {totalPct >= 0 ? '+' : ''}{totalPct}%
+                  </span>
+                </td>
               </tr>
             </tfoot>
           </table>
@@ -179,42 +142,38 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index }) {
 }
 
 export default function Dashboard({ allRows }) {
+
+  // Helper to compute total % for a row
+  function calcTotalPct(r) {
+    const totalPrev = r.monthData.reduce((s, md) => s + md.prev, 0);
+    const totalCurr = r.monthData.reduce((s, md) => s + md.curr, 0);
+    return totalPrev === 0 ? 0 : Math.round(((totalCurr - totalPrev) / totalPrev) * 100);
+  }
+
   const topIncreases = [...allRows]
     .map((r) => {
       const maxPct = Math.max(...r.monthData.map((md) => md.pct));
       const bestMonth = r.monthData.find((md) => md.pct === maxPct);
-      return { ...r, maxPct, bestMonth };
+      const totalPct = calcTotalPct(r);
+      return { ...r, maxPct, bestMonth, totalPct };
     })
-    .filter(
-      (r) => r.maxPct > 0 && !(r.maxPct === 100 && r.bestMonth?.prev === 0),
-    )
-    .sort((a, b) => {
-      if (a.maxPct === 100 && b.maxPct === 100) {
-        return (b.bestMonth?.curr || 0) - (a.bestMonth?.curr || 0);
-      }
-      return b.maxPct - a.maxPct;
-    })
+    .filter((r) => r.totalPct > 0 && !(r.maxPct === 100 && r.bestMonth?.prev === 0))
+    .sort((a, b) => b.totalPct - a.totalPct)
     .slice(0, 200);
 
   const topDrops = [...allRows]
     .map((r) => {
       const minPct = Math.min(...r.monthData.map((md) => md.pct));
       const worstMonth = r.monthData.find((md) => md.pct === minPct);
-      return { ...r, minPct, worstMonth };
+      const totalPct = calcTotalPct(r);
+      return { ...r, minPct, worstMonth, totalPct };
     })
-    .filter(
-      (r) => r.minPct < 0 && !(r.minPct === -100 && r.worstMonth?.curr === 0),
-    )
-    .sort((a, b) => {
-      if (a.minPct === -100 && b.minPct === -100) {
-        return (b.worstMonth?.prev || 0) - (a.worstMonth?.prev || 0);
-      }
-      return a.minPct - b.minPct;
-    })
+    .filter((r) => r.totalPct < 0 && !(r.minPct === -100 && r.worstMonth?.curr === 0))
+    .sort((a, b) => a.totalPct - b.totalPct)
     .slice(0, 50);
 
-  const maxIncrease = topIncreases[0]?.maxPct || 100;
-  const maxDrop = Math.abs(topDrops[0]?.minPct || 100);
+  const maxIncrease = topIncreases[0]?.totalPct || 100;
+  const maxDrop = Math.abs(topDrops[0]?.totalPct || 100);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -222,9 +181,7 @@ export default function Dashboard({ allRows }) {
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 mb-5">
           <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
-          <h3 className="text-sm font-semibold text-gray-700">
-            Top 200 Increases
-          </h3>
+          <h3 className="text-sm font-semibold text-gray-700">Top 200 Increases</h3>
         </div>
         {topIncreases.length === 0 ? (
           <p className="text-sm text-gray-400">No increases found</p>
@@ -237,6 +194,7 @@ export default function Dashboard({ allRows }) {
                 r={r}
                 isIncrease={true}
                 pct={r.maxPct}
+                totalPct={r.totalPct}
                 month={r.bestMonth?.month}
                 units={`${r.bestMonth?.prev.toLocaleString()} → ${r.bestMonth?.curr.toLocaleString()}`}
                 diff={`+${r.bestMonth?.diff.toLocaleString()} units`}
@@ -264,6 +222,7 @@ export default function Dashboard({ allRows }) {
                 r={r}
                 isIncrease={false}
                 pct={r.minPct}
+                totalPct={r.totalPct}
                 month={r.worstMonth?.month}
                 units={`${r.worstMonth?.prev.toLocaleString()} → ${r.worstMonth?.curr.toLocaleString()}`}
                 diff={`${r.worstMonth?.diff.toLocaleString()} units`}

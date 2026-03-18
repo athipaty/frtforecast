@@ -40,7 +40,7 @@ function MoverCard({
             </span>
           </p>
         </div>
-        <div className="flex items-center gap-2 ml-3">
+        <div className="flex items-center gap-2 ml-3 flex-shrink-0">
           <span
             className={`text-sm font-bold ${isIncrease ? "text-blue-600" : "text-red-500"}`}
           >

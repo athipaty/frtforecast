@@ -63,9 +63,9 @@ export default function UploadPage({
                     {[
                       "customer",
                       "part no",
-                      "Feb-26",
-                      "Mar-26",
-                      "Apr-26",
+                      "Feb",
+                      "Mar",
+                      "Apr",
                       "...",
                     ].map((h) => (
                       <th key={h} className="px-3 py-2 text-left font-medium">
@@ -122,8 +122,7 @@ export default function UploadPage({
               {[
                 "1st col: customer",
                 "2nd col: part no",
-                "Month cols: Feb-26, Mar-26…",
-                "Use - or blank for zero",
+                "Month cols: Feb, Mar...",
               ].map((tip, i) => (
                 <span
                   key={i}

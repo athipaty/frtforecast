@@ -254,3 +254,4 @@ export default function ForecastCompare() {
       </div>
     </div>
   );
+}

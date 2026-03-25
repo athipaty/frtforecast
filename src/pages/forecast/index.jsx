@@ -14,6 +14,7 @@ export default function ForecastCompare() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dashSearch, setDashSearch] = useState("");
   const prevRef = useRef();
   const currRef = useRef();
 
@@ -54,6 +55,7 @@ export default function ForecastCompare() {
         `${API}/api/forecast/compare?prevId=${prevId}&currId=${currId}`
       );
       setResult(await res.json());
+      setDashSearch("");
       setPage("dashboard");
     } catch {
       alert("Compare failed");
@@ -176,14 +178,26 @@ export default function ForecastCompare() {
               )}
             </div>
           </div>
+
           {result && page === "dashboard" && (
-            <button onClick={exportCSV} className="border border-gray-200 px-3 py-1.5 rounded-lg text-xs text-gray-600 hover:bg-gray-50 transition">
-              ↓ Export CSV
-            </button>
+            <div className="flex items-center gap-2">
+              <input
+                value={dashSearch}
+                onChange={(e) => setDashSearch(e.target.value)}
+                placeholder="Search part / customer…"
+                className="border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 w-36 sm:w-48"
+              />
+              <button
+                onClick={exportCSV}
+                className="border border-gray-200 px-3 py-1.5 rounded-lg text-xs text-gray-600 hover:bg-gray-50 transition flex-shrink-0"
+              >
+                ↓ Export CSV
+              </button>
+            </div>
           )}
         </div>
 
-        {/* Page content — NO key={page} here */}
+        {/* Page content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {page === "upload" ? (
             <div className="page-enter">
@@ -226,6 +240,7 @@ export default function ForecastCompare() {
                     allRows={allRows}
                     prevFile={result.prevFile}
                     currFile={result.currFile}
+                    search={dashSearch}
                   />
                 </div>
               )}

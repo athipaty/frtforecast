@@ -127,7 +127,7 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index, tota
   );
 }
 
-export default function Dashboard({ allRows, prevFile, currFile }) {
+export default function Dashboard({ allRows, prevFile, currFile, search = "" }) {
   const [filterNew, setFilterNew] = useState(false);
 
   function calcTotalPct(r) {
@@ -136,7 +136,14 @@ export default function Dashboard({ allRows, prevFile, currFile }) {
     return totalPrev === 0 ? 0 : Math.round(((totalCurr - totalPrev) / totalPrev) * 100);
   }
 
-  const topIncreases = [...allRows]
+  const filtered = search
+    ? allRows.filter((r) =>
+        r.partNo.toLowerCase().includes(search.toLowerCase()) ||
+        r.customer.toLowerCase().includes(search.toLowerCase())
+      )
+    : allRows;
+
+  const topIncreases = [...filtered]
     .map((r) => {
       const maxPct = Math.max(...r.monthData.map((md) => md.pct));
       const bestMonth = r.monthData.find((md) => md.pct === maxPct);
@@ -147,7 +154,7 @@ export default function Dashboard({ allRows, prevFile, currFile }) {
     .sort((a, b) => b.totalPct - a.totalPct)
     .slice(0, 200);
 
-  const topDrops = [...allRows]
+  const topDrops = [...filtered]
     .map((r) => {
       const minPct = Math.min(...r.monthData.map((md) => md.pct));
       const worstMonth = r.monthData.find((md) => md.pct === minPct);
@@ -169,7 +176,9 @@ export default function Dashboard({ allRows, prevFile, currFile }) {
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
-            <h3 className="text-sm font-semibold text-gray-700">Top 200 Increases</h3>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Top 200 Increases {search && <span className="text-gray-400 font-normal">· filtered</span>}
+            </h3>
           </div>
           <button
             onClick={() => setFilterNew((v) => !v)}
@@ -181,7 +190,7 @@ export default function Dashboard({ allRows, prevFile, currFile }) {
           </button>
         </div>
         {topIncreases.length === 0 ? (
-          <p className="text-sm text-gray-400">No increases found</p>
+          <p className="text-sm text-gray-400">{search ? "No results found" : "No increases found"}</p>
         ) : (
           <div className="space-y-3">
             {topIncreases.map((r, i) => (
@@ -206,10 +215,12 @@ export default function Dashboard({ allRows, prevFile, currFile }) {
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 mb-5">
           <span className="w-2.5 h-2.5 rounded-full bg-red-400 inline-block"></span>
-          <h3 className="text-sm font-semibold text-gray-700">Top 50 Drops</h3>
+          <h3 className="text-sm font-semibold text-gray-700">
+            Top 50 Drops {search && <span className="text-gray-400 font-normal">· filtered</span>}
+          </h3>
         </div>
         {topDrops.length === 0 ? (
-          <p className="text-sm text-gray-400">No drops found</p>
+          <p className="text-sm text-gray-400">{search ? "No results found" : "No drops found"}</p>
         ) : (
           <div className="space-y-3">
             {topDrops.map((r, i) => (

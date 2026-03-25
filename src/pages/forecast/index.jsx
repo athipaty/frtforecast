@@ -110,27 +110,20 @@ export default function ForecastCompare() {
         fixed lg:static inset-y-0 left-0 z-30
         w-48 bg-blue-900 flex flex-col flex-shrink-0
         transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}>
-        {/* Logo */}
         <div className="px-4 py-5 border-b border-blue-800 flex justify-between items-center">
           <div>
             <p className="text-white font-bold text-sm tracking-wide">FORECAST</p>
             <p className="text-blue-300 text-xs mt-0.5">Comparison Tool</p>
           </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-blue-300 hover:text-white text-lg"
-          >
-            ✕
-          </button>
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-blue-300 hover:text-white text-lg">✕</button>
         </div>
 
-        {/* Nav */}
         <nav className="flex-1 px-2 py-3 space-y-1">
           {[
-            { key: "upload", icon: "", label: "Upload" },
-            { key: "dashboard", icon: "", label: "Dashboard" },
+            { key: "upload", icon: "⬆", label: "Upload" },
+            { key: "dashboard", icon: "📊", label: "Dashboard" },
           ].map((item) => (
             <button
               key={item.key}
@@ -144,15 +137,12 @@ export default function ForecastCompare() {
               <span>{item.icon}</span>
               {item.label}
               {item.key === "dashboard" && result && (
-                <span className="ml-auto text-xs bg-blue-500 text-white px-1.5 py-0.5 rounded-full">
-                  ready
-                </span>
+                <span className="ml-auto text-xs bg-blue-500 text-white px-1.5 py-0.5 rounded-full">ready</span>
               )}
             </button>
           ))}
         </nav>
 
-        {/* Last compare info */}
         {result && (
           <div className="px-4 py-3 border-t border-blue-800">
             <p className="text-xs text-blue-400 uppercase tracking-wide mb-1">Last compare</p>
@@ -168,11 +158,7 @@ export default function ForecastCompare() {
         {/* Top bar */}
         <div className="bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center flex-shrink-0">
           <div className="flex items-center gap-3">
-            {/* Hamburger */}
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-gray-500 hover:text-gray-700 p-1"
-            >
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-gray-700 p-1">
               <div className="space-y-1">
                 <div className="w-5 h-0.5 bg-current"></div>
                 <div className="w-5 h-0.5 bg-current"></div>
@@ -191,19 +177,15 @@ export default function ForecastCompare() {
             </div>
           </div>
           {result && page === "dashboard" && (
-            <button
-              onClick={exportCSV}
-              className="border border-gray-200 px-3 py-1.5 rounded-lg text-xs text-gray-600 hover:bg-gray-50 transition"
-            >
+            <button onClick={exportCSV} className="border border-gray-200 px-3 py-1.5 rounded-lg text-xs text-gray-600 hover:bg-gray-50 transition">
               ↓ Export CSV
             </button>
           )}
         </div>
 
-        {/* Page content */}
+        {/* Page content — NO key={page} here */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
-
-          {page === "upload" && (
+          {page === "upload" ? (
             <div className="page-enter">
               <UploadPage
                 uploads={uploads}
@@ -216,13 +198,11 @@ export default function ForecastCompare() {
                 handleDelete={handleDelete}
               />
             </div>
-          )}
-
-          {page === "dashboard" && (
+          ) : (
             <div className="page-enter">
               {!result ? (
                 <div className="flex flex-col items-center justify-center h-full text-center py-24">
-                  <div className="text-5xl mb-4"></div>
+                  <div className="text-5xl mb-4">📊</div>
                   <h2 className="text-base font-semibold text-gray-700 mb-2">No comparison yet</h2>
                   <p className="text-sm text-gray-400">Go to Upload and compare two forecasts first.</p>
                   <button
@@ -235,17 +215,18 @@ export default function ForecastCompare() {
               ) : (
                 <div className="space-y-5">
                   {alertCount > 0 && (
-                    <div
-                      className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center gap-3"
-                      style={{ animation: 'fadeSlideIn 0.4s ease forwards', opacity: 0 }}
-                    >
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center gap-3">
                       <span className="text-amber-500">⚠</span>
                       <span className="text-sm text-amber-800">
                         <strong>{alertCount} part{alertCount > 1 ? "s" : ""}</strong> with &gt;{ALERT_PCT}% variance
                       </span>
                     </div>
                   )}
-                  <Dashboard allRows={allRows} prevFile={result?.prevFile} currFile={result?.currFile} />
+                  <Dashboard
+                    allRows={allRows}
+                    prevFile={result.prevFile}
+                    currFile={result.currFile}
+                  />
                 </div>
               )}
             </div>

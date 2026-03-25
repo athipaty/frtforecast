@@ -201,7 +201,7 @@ export default function ForecastCompare() {
         </div>
 
         {/* Page content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6" key={page}>
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
 
           {page === "upload" && (
             <div className="page-enter">
@@ -245,7 +245,7 @@ export default function ForecastCompare() {
                       </span>
                     </div>
                   )}
-                  <Dashboard allRows={allRows} />
+                  <Dashboard allRows={allRows} prevFile={result?.prevFile} currFile={result?.currFile} />
                 </div>
               )}
             </div>

@@ -1,18 +1,11 @@
 import { useState } from "react";
 
 export default function UploadPage({
-  uploads,
-  prevId,
-  currId,
-  setPrevId,
-  setCurrId,
-  uploading,
-  loading,
-  prevRef,
-  currRef,
-  handleUpload,
-  handleCompare,
-  handleDelete,
+  uploads, prevId, currId,
+  setPrevId, setCurrId,
+  uploading, loading,
+  prevRef, currRef,
+  handleUpload, handleCompare, handleDelete,
 }) {
   const [formatOpen, setFormatOpen] = useState(false);
   const [prevFile, setPrevFile] = useState(null);
@@ -25,7 +18,6 @@ export default function UploadPage({
     await handleUpload(label, file);
   }
 
-  // Get latest upload for each label
   const latestPrev = uploads
     .filter((u) => u.label === "previous")
     .sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))[0];
@@ -35,23 +27,18 @@ export default function UploadPage({
 
   return (
     <div className="max-w-3xl mx-auto space-y-5">
-      {/* Format guide — collapsed by default */}
+
+      {/* Format guide */}
       <div className="bg-blue-50 border border-blue-100 rounded-xl overflow-hidden">
         <button
           onClick={() => setFormatOpen((v) => !v)}
           className="w-full flex justify-between items-center px-4 py-3 text-left"
         >
           <div>
-            <p className="text-xs font-bold text-blue-700 uppercase tracking-wider">
-              Required Format
-            </p>
-            <p className="text-xs text-blue-400 mt-0.5">
-              CSV or Excel file with these exact columns:
-            </p>
+            <p className="text-xs font-bold text-blue-700 uppercase tracking-wider">Required Format</p>
+            <p className="text-xs text-blue-400 mt-0.5">CSV or Excel file with these exact columns:</p>
           </div>
-          <span className="text-blue-400 text-sm">
-            {formatOpen ? "▲" : "▼"}
-          </span>
+          <span className="text-blue-400 text-sm">{formatOpen ? "▲" : "▼"}</span>
         </button>
 
         {formatOpen && (
@@ -60,58 +47,20 @@ export default function UploadPage({
               <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-blue-600 text-white">
-                    {[
-                      "customer",
-                      "part no",
-                      "Feb",
-                      "Mar",
-                      "Apr",
-                      "...",
-                    ].map((h) => (
-                      <th key={h} className="px-3 py-2 text-left font-medium">
-                        {h}
-                      </th>
+                    {["customer", "part no", "Feb", "Mar", "Apr", "..."].map((h) => (
+                      <th key={h} className="px-3 py-2 text-left font-medium">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {[
-                    [
-                      "AAA",
-                      "TG949046-2600",
-                      "1,000",
-                      "-",
-                      "1,000",
-                      "...",
-                    ],
-                    [
-                      "AHT",
-                      "BC940-24404",
-                      "16,000",
-                      "20,040",
-                      "18,336",
-                      "...",
-                    ],
-                    [
-                      "ADVICS",
-                      "113631-10070",
-                      "117,000",
-                      "145,584",
-                      "138,974",
-                      "...",
-                    ],
+                    ["AAA", "TG949046-2600", "1,000", "-", "1,000", "..."],
+                    ["AHT", "BC940-24404", "16,000", "20,040", "18,336", "..."],
+                    ["ADVICS", "113631-10070", "117,000", "145,584", "138,974", "..."],
                   ].map((row, i) => (
-                    <tr
-                      key={i}
-                      className={i % 2 === 0 ? "bg-white" : "bg-blue-50"}
-                    >
+                    <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-blue-50"}>
                       {row.map((cell, j) => (
-                        <td
-                          key={j}
-                          className={`px-3 py-2 ${j === 5 ? "text-gray-300" : "text-gray-500"}`}
-                        >
-                          {cell}
-                        </td>
+                        <td key={j} className={`px-3 py-2 ${j === 5 ? "text-gray-300" : "text-gray-500"}`}>{cell}</td>
                       ))}
                     </tr>
                   ))}
@@ -119,17 +68,8 @@ export default function UploadPage({
               </table>
             </div>
             <div className="flex flex-wrap gap-2">
-              {[
-                "1st col: customer",
-                "2nd col: part no",
-                "Month cols: Feb, Mar...",
-              ].map((tip, i) => (
-                <span
-                  key={i}
-                  className="text-xs text-blue-700 bg-blue-100 px-2 py-1 rounded-full"
-                >
-                  ✓ {tip}
-                </span>
+              {["1st col: customer", "2nd col: part no", "Month cols: Feb, Mar..."].map((tip, i) => (
+                <span key={i} className="text-xs text-blue-700 bg-blue-100 px-2 py-1 rounded-full">✓ {tip}</span>
               ))}
             </div>
           </div>
@@ -138,33 +78,19 @@ export default function UploadPage({
 
       {/* Upload + Select */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
         {/* Upload */}
         <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-            Upload Files
-          </p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Upload Files</p>
           <div className="space-y-3">
             {[
-              {
-                label: "previous",
-                file: prevFile,
-                ref: prevRef,
-                latest: latestPrev,
-              },
-              {
-                label: "current",
-                file: currFile,
-                ref: currRef,
-                latest: latestCurr,
-              },
+              { label: "previous", file: prevFile, ref: prevRef, latest: latestPrev },
+              { label: "current", file: currFile, ref: currRef, latest: latestCurr },
             ].map(({ label, file, ref, latest }) => (
               <div key={label}>
-                <p className="text-xs text-gray-500 mb-1.5 capitalize">
-                  {label} forecast
-                </p>
+                <p className="text-xs text-gray-500 mb-1.5 capitalize">{label} forecast</p>
                 <input
-                  type="file"
-                  accept=".csv,.xlsx,.xls"
+                  type="file" accept=".csv,.xlsx,.xls"
                   ref={ref}
                   className="hidden"
                   onChange={(e) => handleFileChange(label, e.target.files[0])}
@@ -179,35 +105,21 @@ export default function UploadPage({
                   }`}
                 >
                   {uploading ? (
-                    <span className="flex items-center gap-2">
-                      <span className="animate-spin">⟳</span> Uploading…
-                    </span>
+                    <span className="flex items-center gap-2"><span className="animate-spin">⟳</span> Uploading…</span>
                   ) : file ? (
-                    <span className="flex items-center gap-2">
-                      <span className="text-blue-500">✓</span>
-                      <span className="truncate">{file}</span>
-                    </span>
+                    <span className="flex items-center gap-2"><span className="text-blue-500">✓</span><span className="truncate">{file}</span></span>
                   ) : latest ? (
-                    <span className="flex items-center gap-2">
-                      <span className="text-blue-500">✓</span>
-                      <span className="truncate">{latest.filename}</span>
-                    </span>
+                    <span className="flex items-center gap-2"><span className="text-blue-500">✓</span><span className="truncate">{latest.filename}</span></span>
                   ) : (
                     "+ Upload CSV / Excel"
                   )}
                 </button>
-
-                {/* Row count preview */}
                 {latest && (
                   <div className="mt-1.5 flex items-center gap-2">
                     <span className="text-xs text-gray-400">
-                      {latest.rowCount.toLocaleString()} rows ·{" "}
-                      {new Date(latest.uploadDate).toLocaleDateString()}
+                      {latest.rowCount.toLocaleString()} rows · {new Date(latest.uploadDate).toLocaleDateString()}
                     </span>
-                    <span
-                      className="text-xs text-blue-500 cursor-pointer hover:text-blue-700"
-                      onClick={() => ref.current.click()}
-                    >
+                    <span className="text-xs text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => ref.current.click()}>
                       replace
                     </span>
                   </div>
@@ -219,14 +131,9 @@ export default function UploadPage({
 
         {/* Select & Compare */}
         <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-            Select & Compare
-          </p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Select & Compare</p>
           <div className="space-y-3">
-            {[
-              ["Previous", prevId, setPrevId],
-              ["Current", currId, setCurrId],
-            ].map(([label, val, setter]) => (
+            {[["Previous", prevId, setPrevId], ["Current", currId, setCurrId]].map(([label, val, setter]) => (
               <div key={label}>
                 <p className="text-xs text-gray-500 mb-1.5">{label}</p>
                 <select
@@ -237,8 +144,7 @@ export default function UploadPage({
                   <option value="">Select upload…</option>
                   {uploads.map((u) => (
                     <option key={u._id} value={u._id}>
-                      {u.filename} · {u.rowCount} rows (
-                      {new Date(u.uploadDate).toLocaleDateString()})
+                      {u.filename} · {u.rowCount} rows ({new Date(u.uploadDate).toLocaleDateString()})
                     </option>
                   ))}
                 </select>
@@ -260,38 +166,21 @@ export default function UploadPage({
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
             Upload History
-            <span className="ml-2 text-gray-300 font-normal normal-case">
-              {uploads.length} files
-            </span>
+            <span className="ml-2 text-gray-300 font-normal normal-case">{uploads.length} files</span>
           </p>
           <div className="space-y-2">
             {uploads.map((u) => (
-              <div
-                key={u._id}
-                className="flex justify-between items-center bg-gray-50 rounded-lg px-3 py-2.5 hover:bg-gray-100 transition"
-              >
+              <div key={u._id} className="flex justify-between items-center bg-gray-50 rounded-lg px-3 py-2.5 hover:bg-gray-100 transition">
                 <div className="flex items-center gap-3">
-                  <span
-                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${u.label === "current" ? "bg-blue-100 text-blue-700" : "bg-gray-200 text-gray-600"}`}
-                  >
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${u.label === "current" ? "bg-blue-100 text-blue-700" : "bg-gray-200 text-gray-600"}`}>
                     {u.label}
                   </span>
                   <div>
-                    <p className="text-xs text-gray-700 font-medium">
-                      {u.filename}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      {u.rowCount.toLocaleString()} rows ·{" "}
-                      {new Date(u.uploadDate).toLocaleDateString()}
-                    </p>
+                    <p className="text-xs text-gray-700 font-medium">{u.filename}</p>
+                    <p className="text-xs text-gray-400">{u.rowCount.toLocaleString()} rows · {new Date(u.uploadDate).toLocaleDateString()}</p>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleDelete(u._id)}
-                  className="text-xs text-red-400 hover:text-red-600 transition"
-                >
-                  ✕
-                </button>
+                <button onClick={() => handleDelete(u._id)} className="text-xs text-red-400 hover:text-red-600 transition">✕</button>
               </div>
             ))}
           </div>

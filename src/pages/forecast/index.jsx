@@ -14,6 +14,7 @@ export default function ForecastCompare() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [dashSearch, setDashSearch] = useState("");
   const prevRef = useRef();
   const currRef = useRef();
@@ -110,18 +111,38 @@ export default function ForecastCompare() {
       {/* Sidebar */}
       <div className={`
         fixed lg:static inset-y-0 left-0 z-30
-        w-48 bg-blue-900 flex flex-col flex-shrink-0
-        transform transition-transform duration-300 ease-in-out
+        bg-blue-900 flex flex-col flex-shrink-0
+        transform transition-all duration-300 ease-in-out
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+        ${sidebarCollapsed ? "lg:w-14" : "lg:w-48"}
+        w-48
       `}>
-        <div className="px-4 py-5 border-b border-blue-800 flex justify-between items-center">
-          <div>
-            <p className="text-white font-bold text-sm tracking-wide">FORECAST</p>
-            <p className="text-blue-300 text-xs mt-0.5">Comparison Tool</p>
-          </div>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-blue-300 hover:text-white text-lg">✕</button>
+        {/* Logo */}
+        <div className="px-3 py-4 border-b border-blue-800 flex justify-between items-center flex-shrink-0">
+          {!sidebarCollapsed && (
+            <div className="lg:block">
+              <p className="text-white font-bold text-sm tracking-wide">FORECAST</p>
+              <p className="text-blue-300 text-xs mt-0.5">Comparison Tool</p>
+            </div>
+          )}
+          {/* Desktop collapse toggle */}
+          <button
+            onClick={() => setSidebarCollapsed(v => !v)}
+            className="hidden lg:flex text-blue-300 hover:text-white transition p-1 rounded"
+            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {sidebarCollapsed ? "→" : "←"}
+          </button>
+          {/* Mobile close */}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden text-blue-300 hover:text-white text-lg"
+          >
+            ✕
+          </button>
         </div>
 
+        {/* Nav */}
         <nav className="flex-1 px-2 py-3 space-y-1">
           {[
             { key: "upload", icon: "⬆", label: "Upload" },
@@ -130,22 +151,31 @@ export default function ForecastCompare() {
             <button
               key={item.key}
               onClick={() => navigateTo(item.key)}
+              title={sidebarCollapsed ? item.label : ""}
               className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-left transition-all duration-200 ${
                 page === item.key
-                  ? "bg-white bg-opacity-20 text-white font-semibold translate-x-1"
-                  : "text-blue-300 hover:bg-white hover:bg-opacity-10 hover:text-white hover:translate-x-1"
-              }`}
+                  ? "bg-white bg-opacity-20 text-white font-semibold"
+                  : "text-blue-300 hover:bg-white hover:bg-opacity-10 hover:text-white"
+              } ${sidebarCollapsed ? "justify-center" : ""}`}
             >
-              <span>{item.icon}</span>
-              {item.label}
-              {item.key === "dashboard" && result && (
-                <span className="ml-auto text-xs bg-blue-500 text-white px-1.5 py-0.5 rounded-full">ready</span>
+              <span className="text-base flex-shrink-0">{item.icon}</span>
+              {!sidebarCollapsed && (
+                <>
+                  {item.label}
+                  {item.key === "dashboard" && result && (
+                    <span className="ml-auto text-xs bg-blue-500 text-white px-1.5 py-0.5 rounded-full">ready</span>
+                  )}
+                </>
+              )}
+              {sidebarCollapsed && item.key === "dashboard" && result && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-blue-400 rounded-full"></span>
               )}
             </button>
           ))}
         </nav>
 
-        {result && (
+        {/* Last compare info */}
+        {result && !sidebarCollapsed && (
           <div className="px-4 py-3 border-t border-blue-800">
             <p className="text-xs text-blue-400 uppercase tracking-wide mb-1">Last compare</p>
             <p className="text-xs text-white truncate">{result.prevFile}</p>
@@ -160,7 +190,11 @@ export default function ForecastCompare() {
         {/* Top bar */}
         <div className="bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center flex-shrink-0">
           <div className="flex items-center gap-3">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-gray-700 p-1">
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden text-gray-500 hover:text-gray-700 p-1"
+            >
               <div className="space-y-1">
                 <div className="w-5 h-0.5 bg-current"></div>
                 <div className="w-5 h-0.5 bg-current"></div>

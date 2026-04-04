@@ -33,9 +33,9 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index, tota
         </div>
       </div>
 
-      <div className={`w-full rounded-full h-2 ${isIncrease ? "bg-blue-50" : "bg-red-50"}`}>
+      <div className={`w-full rounded-full h-1.5 ${isIncrease ? "bg-blue-50" : "bg-red-50"}`}>
         <div
-          className={`h-2 rounded-full bar-animate ${isIncrease ? "bg-blue-500" : "bg-red-400"}`}
+          className={`h-1.5 rounded-full bar-animate ${isIncrease ? "bg-blue-500" : "bg-red-400"}`}
           style={{ width: `${Math.min((Math.abs(totalPct) / maxPct) * 100, 100)}%` }}
         />
       </div>
@@ -46,21 +46,21 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index, tota
 
       {expanded && (
         <div
-          className="mt-3 border-t border-gray-100 pt-3 overflow-x-auto"
+          className="mt-2 border-t border-gray-100 pt-2 overflow-x-auto"
           style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0 }}
         >
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left py-1.5 text-gray-400 font-medium">Month</th>
-                <th className="text-right py-1.5 text-gray-400 font-medium truncate max-w-[80px]">
+                <th className="text-left py-1 text-gray-400 font-medium">Month</th>
+                <th className="text-right py-1 text-gray-400 font-medium truncate max-w-[80px]">
                   {prevFile ? prevFile.replace(/\.[^.]+$/, "") : "Previous"}
                 </th>
-                <th className="text-right py-1.5 text-gray-400 font-medium truncate max-w-[80px]">
+                <th className="text-right py-1 text-gray-400 font-medium truncate max-w-[80px]">
                   {currFile ? currFile.replace(/\.[^.]+$/, "") : "Current"}
                 </th>
-                <th className="text-right py-1.5 text-gray-400 font-medium">Diff</th>
-                <th className="text-right py-1.5 text-gray-400 font-medium">Var%</th>
+                <th className="text-right py-1 text-gray-400 font-medium">Diff</th>
+                <th className="text-right py-1 text-gray-400 font-medium">Var%</th>
               </tr>
             </thead>
             <tbody>
@@ -70,13 +70,13 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index, tota
                   className="border-b border-gray-50 last:border-0"
                   style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0, animationDelay: `${i * 0.04}s` }}
                 >
-                  <td className="py-1.5 text-gray-600 font-medium">{md.month}</td>
-                  <td className="py-1.5 text-right text-gray-400">{md.prev ? md.prev.toLocaleString() : "—"}</td>
-                  <td className="py-1.5 text-right text-gray-700 font-medium">{md.curr ? md.curr.toLocaleString() : "—"}</td>
-                  <td className={`py-1.5 text-right font-medium ${md.diff > 0 ? "text-blue-500" : md.diff < 0 ? "text-red-400" : "text-gray-300"}`}>
+                  <td className="py-1 text-gray-600 font-medium">{md.month}</td>
+                  <td className="py-1 text-right text-gray-400">{md.prev ? md.prev.toLocaleString() : "—"}</td>
+                  <td className="py-1 text-right text-gray-700 font-medium">{md.curr ? md.curr.toLocaleString() : "—"}</td>
+                  <td className={`py-1 text-right font-medium ${md.diff > 0 ? "text-blue-500" : md.diff < 0 ? "text-red-400" : "text-gray-300"}`}>
                     {md.diff > 0 ? "+" : ""}{md.diff ? md.diff.toLocaleString() : "—"}
                   </td>
-                  <td className="py-1.5 text-right">
+                  <td className="py-1 text-right">
                     {md.prev === 0 && md.curr === 0 ? (
                       <span className="text-gray-300">—</span>
                     ) : (
@@ -95,21 +95,21 @@ function MoverCard({ r, pct, month, diff, units, maxPct, isIncrease, index, tota
             </tbody>
             <tfoot>
               <tr className="border-t-2 border-gray-200 bg-gray-50">
-                <td className="py-2 text-gray-700 font-semibold text-xs">Total</td>
-                <td className="py-2 text-right text-gray-600 font-semibold text-xs">
+                <td className="py-1.5 text-gray-700 font-semibold text-xs">Total</td>
+                <td className="py-1.5 text-right text-gray-600 font-semibold text-xs">
                   {r.monthData.reduce((s, md) => s + md.prev, 0).toLocaleString()}
                 </td>
-                <td className="py-2 text-right text-gray-800 font-semibold text-xs">
+                <td className="py-1.5 text-right text-gray-800 font-semibold text-xs">
                   {r.monthData.reduce((s, md) => s + md.curr, 0).toLocaleString()}
                 </td>
-                <td className={`py-2 text-right font-semibold text-xs ${
+                <td className={`py-1.5 text-right font-semibold text-xs ${
                   r.monthData.reduce((s, md) => s + md.diff, 0) > 0 ? "text-blue-500" :
                   r.monthData.reduce((s, md) => s + md.diff, 0) < 0 ? "text-red-400" : "text-gray-300"
                 }`}>
                   {r.monthData.reduce((s, md) => s + md.diff, 0) > 0 ? "+" : ""}
                   {r.monthData.reduce((s, md) => s + md.diff, 0).toLocaleString()}
                 </td>
-                <td className="py-2 text-right text-xs">
+                <td className="py-1.5 text-right text-xs">
                   <span className={`inline-block px-1.5 py-0.5 rounded-full font-semibold ${
                     totalPct > 0 ? "bg-blue-100 text-blue-700" :
                     totalPct < 0 ? "bg-red-100 text-red-600" :
@@ -155,39 +155,41 @@ function NoChangeCard({ r, index, prevFile, currFile }) {
 
       {expanded && (
         <div
-          className="mt-3 border-t border-gray-100 pt-3 overflow-x-auto"
+          className="mt-2 border-t border-gray-100 pt-2 overflow-x-auto"
           style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0 }}
         >
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left py-1.5 text-gray-400 font-medium">Month</th>
-                <th className="text-right py-1.5 text-gray-400 font-medium">
+                <th className="text-left py-1 text-gray-400 font-medium">Month</th>
+                <th className="text-right py-1 text-gray-400 font-medium">
                   {prevFile ? prevFile.replace(/\.[^.]+$/, "") : "Previous"}
                 </th>
-                <th className="text-right py-1.5 text-gray-400 font-medium">
+                <th className="text-right py-1 text-gray-400 font-medium">
                   {currFile ? currFile.replace(/\.[^.]+$/, "") : "Current"}
                 </th>
               </tr>
             </thead>
             <tbody>
               {r.monthData.map((md, i) => (
-                <tr key={i} className="border-b border-gray-50 last:border-0"
+                <tr
+                  key={i}
+                  className="border-b border-gray-50 last:border-0"
                   style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0, animationDelay: `${i * 0.04}s` }}
                 >
-                  <td className="py-1.5 text-gray-600 font-medium">{md.month}</td>
-                  <td className="py-1.5 text-right text-gray-400">{md.prev ? md.prev.toLocaleString() : "—"}</td>
-                  <td className="py-1.5 text-right text-gray-700 font-medium">{md.curr ? md.curr.toLocaleString() : "—"}</td>
+                  <td className="py-1 text-gray-600 font-medium">{md.month}</td>
+                  <td className="py-1 text-right text-gray-400">{md.prev ? md.prev.toLocaleString() : "—"}</td>
+                  <td className="py-1 text-right text-gray-700 font-medium">{md.curr ? md.curr.toLocaleString() : "—"}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr className="border-t-2 border-gray-200 bg-gray-50">
-                <td className="py-2 text-gray-700 font-semibold text-xs">Total</td>
-                <td className="py-2 text-right text-gray-600 font-semibold text-xs">
+                <td className="py-1.5 text-gray-700 font-semibold text-xs">Total</td>
+                <td className="py-1.5 text-right text-gray-600 font-semibold text-xs">
                   {r.monthData.reduce((s, md) => s + md.prev, 0).toLocaleString()}
                 </td>
-                <td className="py-2 text-right text-gray-800 font-semibold text-xs">
+                <td className="py-1.5 text-right text-gray-800 font-semibold text-xs">
                   {r.monthData.reduce((s, md) => s + md.curr, 0).toLocaleString()}
                 </td>
               </tr>
@@ -237,7 +239,6 @@ export default function Dashboard({ allRows, prevFile, currFile, search = "" }) 
     .sort((a, b) => a.totalPct - b.totalPct)
     .slice(0, 50);
 
-  // No change — exists in both files, total % = 0, but has actual qty
   const noChange = [...filtered]
     .map((r) => {
       const totalPrev = r.monthData.reduce((s, md) => s + md.prev, 0);
@@ -252,11 +253,11 @@ export default function Dashboard({ allRows, prevFile, currFile, search = "" }) 
   const maxDrop = Math.abs(topDrops[0]?.totalPct || 100);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
 
       {/* Top Increases */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <div className="flex items-center justify-between mb-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-3">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
             <h3 className="text-sm font-semibold text-gray-700">
@@ -276,7 +277,7 @@ export default function Dashboard({ allRows, prevFile, currFile, search = "" }) 
         {topIncreases.length === 0 ? (
           <p className="text-sm text-gray-400">{search ? "No results" : "No increases found"}</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {topIncreases.map((r, i) => (
               <MoverCard
                 key={i} index={i} r={r}
@@ -296,8 +297,8 @@ export default function Dashboard({ allRows, prevFile, currFile, search = "" }) 
       </div>
 
       {/* Top Drops */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <div className="flex items-center gap-2 mb-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-3">
+        <div className="flex items-center gap-2 mb-3">
           <span className="w-2.5 h-2.5 rounded-full bg-red-400 inline-block"></span>
           <h3 className="text-sm font-semibold text-gray-700">
             Drops <span className="text-gray-400 font-normal text-xs">({topDrops.length})</span>
@@ -307,7 +308,7 @@ export default function Dashboard({ allRows, prevFile, currFile, search = "" }) 
         {topDrops.length === 0 ? (
           <p className="text-sm text-gray-400">{search ? "No results" : "No drops found"}</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {topDrops.map((r, i) => (
               <MoverCard
                 key={i} index={i} r={r}
@@ -327,8 +328,8 @@ export default function Dashboard({ allRows, prevFile, currFile, search = "" }) 
       </div>
 
       {/* No Change */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <div className="flex items-center gap-2 mb-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-3">
+        <div className="flex items-center gap-2 mb-3">
           <span className="w-2.5 h-2.5 rounded-full bg-gray-400 inline-block"></span>
           <h3 className="text-sm font-semibold text-gray-700">
             No Change <span className="text-gray-400 font-normal text-xs">({noChange.length})</span>
@@ -338,7 +339,7 @@ export default function Dashboard({ allRows, prevFile, currFile, search = "" }) 
         {noChange.length === 0 ? (
           <p className="text-sm text-gray-400">{search ? "No results" : "No unchanged items"}</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {noChange.map((r, i) => (
               <NoChangeCard
                 key={i} index={i} r={r}

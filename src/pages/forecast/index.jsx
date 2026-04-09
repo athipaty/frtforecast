@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import Sidebar from "./Sidebar";
+import TopBar from "./TopBar";
 import UploadPage from "./UploadPage";
 import Dashboard from "./Dashboard";
 
@@ -108,130 +110,26 @@ export default function ForecastCompare() {
         />
       )}
 
-      {/* Sidebar */}
-      <div className={`
-        fixed lg:static inset-y-0 left-0 z-30
-        bg-blue-900 flex flex-col flex-shrink-0
-        transform transition-all duration-300 ease-in-out
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-        ${sidebarCollapsed ? "lg:w-14" : "lg:w-48"}
-        w-48
-      `}>
-        {/* Logo */}
-        <div className="px-3 py-4 border-b border-blue-800 flex justify-between items-center flex-shrink-0">
-          {!sidebarCollapsed && (
-            <div className="lg:block">
-              <p className="text-white font-bold text-sm tracking-wide">FORECAST</p>
-              <p className="text-blue-300 text-xs mt-0.5">Comparison Tool</p>
-            </div>
-          )}
-          {/* Desktop collapse toggle */}
-          <button
-            onClick={() => setSidebarCollapsed(v => !v)}
-            className="hidden lg:flex text-blue-300 hover:text-white transition p-1 rounded"
-            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {sidebarCollapsed ? "→" : "←"}
-          </button>
-          {/* Mobile close */}
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-blue-300 hover:text-white text-lg"
-          >
-            ✕
-          </button>
-        </div>
+      <Sidebar
+        page={page}
+        result={result}
+        sidebarOpen={sidebarOpen}
+        sidebarCollapsed={sidebarCollapsed}
+        setSidebarOpen={setSidebarOpen}
+        setSidebarCollapsed={setSidebarCollapsed}
+        navigateTo={navigateTo}
+      />
 
-        {/* Nav */}
-        <nav className="flex-1 px-2 py-3 space-y-1">
-          {[
-            { key: "upload", icon: "⬆", label: "Upload" },
-            { key: "dashboard", icon: "📊", label: "Dashboard" },
-          ].map((item) => (
-            <button
-              key={item.key}
-              onClick={() => navigateTo(item.key)}
-              title={sidebarCollapsed ? item.label : ""}
-              className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-left transition-all duration-200 ${
-                page === item.key
-                  ? "bg-white bg-opacity-20 text-white font-semibold"
-                  : "text-blue-300 hover:bg-white hover:bg-opacity-10 hover:text-white"
-              } ${sidebarCollapsed ? "justify-center" : ""}`}
-            >
-              <span className="text-base flex-shrink-0">{item.icon}</span>
-              {!sidebarCollapsed && (
-                <>
-                  {item.label}
-                  {item.key === "dashboard" && result && (
-                    <span className="ml-auto text-xs bg-blue-500 text-white px-1.5 py-0.5 rounded-full">ready</span>
-                  )}
-                </>
-              )}
-              {sidebarCollapsed && item.key === "dashboard" && result && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-blue-400 rounded-full"></span>
-              )}
-            </button>
-          ))}
-        </nav>
-
-        {/* Last compare info */}
-        {result && !sidebarCollapsed && (
-          <div className="px-4 py-3 border-t border-blue-800">
-            <p className="text-xs text-blue-400 uppercase tracking-wide mb-1">Last compare</p>
-            <p className="text-xs text-white truncate">{result.prevFile}</p>
-            <p className="text-xs text-blue-300 truncate">→ {result.currFile}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <TopBar
+          page={page}
+          result={result}
+          dashSearch={dashSearch}
+          setDashSearch={setDashSearch}
+          exportCSV={exportCSV}
+          setSidebarOpen={setSidebarOpen}
+        />
 
-        {/* Top bar */}
-        <div className="bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center flex-shrink-0">
-          <div className="flex items-center gap-3">
-            {/* Mobile hamburger */}
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-gray-500 hover:text-gray-700 p-1"
-            >
-              <div className="space-y-1">
-                <div className="w-5 h-0.5 bg-current"></div>
-                <div className="w-5 h-0.5 bg-current"></div>
-                <div className="w-5 h-0.5 bg-current"></div>
-              </div>
-            </button>
-            <div>
-              <h1 className="text-base font-semibold text-gray-800">
-                {page === "upload" ? "Upload Forecasts" : "Dashboard"}
-              </h1>
-              {result && page === "dashboard" && (
-                <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">
-                  {result.prevFile} → {result.currFile}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {result && page === "dashboard" && (
-            <div className="flex items-center gap-2">
-              <input
-                value={dashSearch}
-                onChange={(e) => setDashSearch(e.target.value)}
-                placeholder="Search part / customer…"
-                className="border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 w-36 sm:w-48"
-              />
-              <button
-                onClick={exportCSV}
-                className="border border-gray-200 px-3 py-1.5 rounded-lg text-xs text-gray-600 hover:bg-gray-50 transition flex-shrink-0"
-              >
-                ↓ Export CSV
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Page content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {page === "upload" ? (
             <div className="page-enter">

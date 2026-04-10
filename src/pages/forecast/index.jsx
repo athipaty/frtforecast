@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import UploadPage from "./UploadPage";
 import Dashboard from "./Dashboard";
+import StockMonitor from "./stock/StockMonitor";
 
 const API = import.meta.env.VITE_API_URL;
 const ALERT_PCT = 20;
@@ -55,7 +56,7 @@ export default function ForecastCompare() {
     setLoading(true);
     try {
       const res = await fetch(
-        `${API}/api/forecast/compare?prevId=${prevId}&currId=${currId}`
+        `${API}/api/forecast/compare?prevId=${prevId}&currId=${currId}`,
       );
       setResult(await res.json());
       setDashSearch("");
@@ -76,17 +77,34 @@ export default function ForecastCompare() {
   function exportCSV() {
     if (!result) return;
     const headers = [
-      "Customer", "Part No",
-      ...result.months.flatMap((m) => [`${m} Prev`, `${m} Curr`, `${m} Diff`, `${m} Var%`]),
+      "Customer",
+      "Part No",
+      ...result.months.flatMap((m) => [
+        `${m} Prev`,
+        `${m} Curr`,
+        `${m} Diff`,
+        `${m} Var%`,
+      ]),
     ];
     const lines = [headers.join(",")];
     result.rows.forEach((r) => {
       lines.push(
-        [r.customer, r.partNo, ...r.monthData.flatMap((md) => [md.prev, md.curr, md.diff, `${md.pct}%`])].join(",")
+        [
+          r.customer,
+          r.partNo,
+          ...r.monthData.flatMap((md) => [
+            md.prev,
+            md.curr,
+            md.diff,
+            `${md.pct}%`,
+          ]),
+        ].join(","),
       );
     });
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" }));
+    a.href = URL.createObjectURL(
+      new Blob([lines.join("\n")], { type: "text/csv" }),
+    );
     a.download = "forecast_comparison.csv";
     a.click();
   }
@@ -101,7 +119,6 @@ export default function ForecastCompare() {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -135,22 +152,34 @@ export default function ForecastCompare() {
             <div className="page-enter">
               <UploadPage
                 uploads={uploads}
-                prevId={prevId} currId={currId}
-                setPrevId={setPrevId} setCurrId={setCurrId}
-                uploading={uploading} loading={loading}
-                prevRef={prevRef} currRef={currRef}
+                prevId={prevId}
+                currId={currId}
+                setPrevId={setPrevId}
+                setCurrId={setCurrId}
+                uploading={uploading}
+                loading={loading}
+                prevRef={prevRef}
+                currRef={currRef}
                 handleUpload={handleUpload}
                 handleCompare={handleCompare}
                 handleDelete={handleDelete}
               />
+            </div>
+          ) : page === "stock" ? (
+            <div className="page-enter">
+              <StockMonitor />
             </div>
           ) : (
             <div className="page-enter">
               {!result ? (
                 <div className="flex flex-col items-center justify-center h-full text-center py-24">
                   <div className="text-5xl mb-4">📊</div>
-                  <h2 className="text-base font-semibold text-gray-700 mb-2">No comparison yet</h2>
-                  <p className="text-sm text-gray-400">Go to Upload and compare two forecasts first.</p>
+                  <h2 className="text-base font-semibold text-gray-700 mb-2">
+                    No comparison yet
+                  </h2>
+                  <p className="text-sm text-gray-400">
+                    Go to Upload and compare two forecasts first.
+                  </p>
                   <button
                     onClick={() => setPage("upload")}
                     className="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
@@ -164,7 +193,10 @@ export default function ForecastCompare() {
                     <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center gap-3">
                       <span className="text-amber-500">⚠</span>
                       <span className="text-sm text-amber-800">
-                        <strong>{alertCount} part{alertCount > 1 ? "s" : ""}</strong> with &gt;{ALERT_PCT}% variance
+                        <strong>
+                          {alertCount} part{alertCount > 1 ? "s" : ""}
+                        </strong>{" "}
+                        with &gt;{ALERT_PCT}% variance
                       </span>
                     </div>
                   )}

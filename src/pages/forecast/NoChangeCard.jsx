@@ -17,7 +17,7 @@ export default function NoChangeCard({ r, index, prevFile, currFile }) {
         <div className="flex items-center gap-2 ml-3 flex-shrink-0">
           <span className="text-sm font-bold text-gray-400">+0%</span>
           <button
-            onClick={() => setExpanded((v) => !v)}
+            onClick={() => setExpanded(v => !v)}
             className="text-xs text-gray-400 hover:text-gray-600 border border-gray-200 rounded px-2 py-0.5 transition"
           >
             {expanded ? "▲ hide" : "▼ detail"}
@@ -27,10 +27,7 @@ export default function NoChangeCard({ r, index, prevFile, currFile }) {
       <p className="text-xs text-gray-400 mt-1">{totalQty.toLocaleString()} units · no change</p>
 
       {expanded && (
-        <div
-          className="mt-2 border-t border-gray-100 pt-2 overflow-x-auto"
-          style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0 }}
-        >
+        <div className="mt-2 border-t border-gray-100 pt-2 overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-100">
@@ -45,11 +42,7 @@ export default function NoChangeCard({ r, index, prevFile, currFile }) {
             </thead>
             <tbody>
               {r.monthData.map((md, i) => (
-                <tr
-                  key={i}
-                  className="border-b border-gray-50 last:border-0"
-                  style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0, animationDelay: `${i * 0.04}s` }}
-                >
+                <tr key={i} className="border-b border-gray-50 last:border-0">
                   <td className="py-1 text-gray-600 font-medium">{md.month}</td>
                   <td className="py-1 text-right text-gray-400">{md.prev ? md.prev.toLocaleString() : "—"}</td>
                   <td className="py-1 text-right text-gray-700 font-medium">{md.curr ? md.curr.toLocaleString() : "—"}</td>

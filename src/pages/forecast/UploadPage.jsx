@@ -19,35 +19,34 @@ export default function UploadPage({
   }
 
   const latestPrev = uploads
-    .filter((u) => u.label === "previous")
+    .filter(u => u.label === "previous")
     .sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))[0];
   const latestCurr = uploads
-    .filter((u) => u.label === "current")
+    .filter(u => u.label === "current")
     .sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))[0];
 
   return (
-    <div className="max-w-3xl mx-auto space-y-5">
+    <div className="max-w-4xl mx-auto space-y-5">
 
       {/* Format guide */}
       <div className="bg-blue-50 border border-blue-100 rounded-xl overflow-hidden">
         <button
-          onClick={() => setFormatOpen((v) => !v)}
+          onClick={() => setFormatOpen(v => !v)}
           className="w-full flex justify-between items-center px-4 py-3 text-left"
         >
           <div>
             <p className="text-xs font-bold text-blue-700 uppercase tracking-wider">Required Format</p>
-            <p className="text-xs text-blue-400 mt-0.5">CSV or Excel file with these exact columns:</p>
+            <p className="text-xs text-blue-400 mt-0.5">CSV or Excel with these columns</p>
           </div>
           <span className="text-blue-400 text-sm">{formatOpen ? "▲" : "▼"}</span>
         </button>
-
         {formatOpen && (
           <div className="px-4 pb-4">
             <div className="bg-white rounded-lg border border-blue-100 overflow-hidden mb-3">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-blue-600 text-white">
-                    {["customer", "part no", "Feb", "Mar", "Apr", "..."].map((h) => (
+                    {["customer", "part no", "Feb", "Mar", "Apr", "..."].map(h => (
                       <th key={h} className="px-3 py-2 text-left font-medium">{h}</th>
                     ))}
                   </tr>
@@ -76,88 +75,114 @@ export default function UploadPage({
         )}
       </div>
 
-      {/* Upload + Select */}
+      {/* Upload cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[
+          {
+            key: "previous",
+            label: "Previous Forecast",
+            description: "The older forecast file to compare from",
+            color: "gray",
+            file: prevFile,
+            latest: latestPrev,
+            ref: prevRef,
+          },
+          {
+            key: "current",
+            label: "Current Forecast",
+            description: "The newer forecast file to compare to",
+            color: "blue",
+            file: currFile,
+            latest: latestCurr,
+            ref: currRef,
+          },
+        ].map(({ key, label, description, color, file, latest, ref }) => {
+          const colors = {
+            gray: { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-600", dot: "bg-gray-400" },
+            blue: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", dot: "bg-blue-500" },
+          };
+          const c = colors[color];
+          const isUploaded = file || latest;
 
-        {/* Upload */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Upload Files</p>
-          <div className="space-y-3">
-            {[
-              { label: "previous", file: prevFile, ref: prevRef, latest: latestPrev },
-              { label: "current", file: currFile, ref: currRef, latest: latestCurr },
-            ].map(({ label, file, ref, latest }) => (
-              <div key={label}>
-                <p className="text-xs text-gray-500 mb-1.5 capitalize">{label} forecast</p>
-                <input
-                  type="file" accept=".csv,.xlsx,.xls"
-                  ref={ref}
-                  className="hidden"
-                  onChange={(e) => handleFileChange(label, e.target.files[0])}
-                />
-                <button
-                  onClick={() => ref.current.click()}
-                  disabled={uploading}
-                  className={`w-full border-2 border-dashed rounded-lg p-3 text-sm transition text-left ${
-                    file || latest
-                      ? "border-blue-300 bg-blue-50 text-blue-600"
-                      : "border-gray-200 bg-gray-50 text-gray-400 hover:border-blue-400 hover:text-blue-500"
-                  }`}
-                >
-                  {uploading ? (
-                    <span className="flex items-center gap-2"><span className="animate-spin">⟳</span> Uploading…</span>
-                  ) : file ? (
-                    <span className="flex items-center gap-2"><span className="text-blue-500">✓</span><span className="truncate">{file}</span></span>
-                  ) : latest ? (
-                    <span className="flex items-center gap-2"><span className="text-blue-500">✓</span><span className="truncate">{latest.filename}</span></span>
-                  ) : (
-                    "+ Upload CSV / Excel"
-                  )}
-                </button>
-                {latest && (
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <span className="text-xs text-gray-400">
-                      {latest.rowCount.toLocaleString()} rows · {new Date(latest.uploadDate).toLocaleDateString()}
-                    </span>
-                    <span className="text-xs text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => ref.current.click()}>
-                      replace
-                    </span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Select & Compare */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Select & Compare</p>
-          <div className="space-y-3">
-            {[["Previous", prevId, setPrevId], ["Current", currId, setCurrId]].map(([label, val, setter]) => (
-              <div key={label}>
-                <p className="text-xs text-gray-500 mb-1.5">{label}</p>
-                <select
-                  value={val}
-                  onChange={(e) => setter(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
-                >
-                  <option value="">Select upload…</option>
-                  {uploads.map((u) => (
-                    <option key={u._id} value={u._id}>
-                      {u.filename} · {u.rowCount} rows ({new Date(u.uploadDate).toLocaleDateString()})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ))}
-            <button
-              onClick={handleCompare}
-              disabled={loading || !prevId || !currId}
-              className="w-full bg-blue-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40 transition"
+          return (
+            <div
+              key={key}
+              className={`rounded-xl border p-4 transition ${isUploaded ? `${c.bg} ${c.border}` : "bg-white border-gray-200"}`}
             >
-              {loading ? "Comparing…" : "Compare →"}
-            </button>
-          </div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className={`w-2.5 h-2.5 rounded-full ${c.dot}`}></span>
+                <p className={`text-sm font-semibold ${isUploaded ? c.text : "text-gray-700"}`}>{label}</p>
+                {isUploaded && <span className={`ml-auto text-xs ${c.text}`}>✓</span>}
+              </div>
+              <p className="text-xs text-gray-400 mb-1">{description}</p>
+              <p className="text-xs text-gray-300 font-mono mb-3">customer, part_no, month cols...</p>
+
+              <input
+                type="file" accept=".csv,.xlsx,.xls"
+                ref={ref}
+                className="hidden"
+                onChange={e => handleFileChange(key, e.target.files[0])}
+              />
+              <button
+                onClick={() => ref.current.click()}
+                disabled={uploading}
+                className={`w-full border-2 border-dashed rounded-lg py-2 text-xs transition ${
+                  isUploaded
+                    ? `${c.border} ${c.text} hover:opacity-80`
+                    : "border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500"
+                }`}
+              >
+                {uploading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="animate-spin">⟳</span> Uploading…
+                  </span>
+                ) : file ? (
+                  `✓ ${file} · replace`
+                ) : latest ? (
+                  `✓ ${latest.filename} · replace`
+                ) : (
+                  "+ Upload CSV / Excel"
+                )}
+              </button>
+
+              {latest && (
+                <p className="text-xs text-gray-400 mt-1.5">
+                  {latest.rowCount.toLocaleString()} rows · {new Date(latest.uploadDate).toLocaleDateString()}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Select & Compare */}
+      <div className="bg-white border border-gray-200 rounded-xl p-4">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Select & Compare</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+          {[["Previous", prevId, setPrevId], ["Current", currId, setCurrId]].map(([label, val, setter]) => (
+            <div key={label}>
+              <p className="text-xs text-gray-500 mb-1.5">{label}</p>
+              <select
+                value={val}
+                onChange={e => setter(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+              >
+                <option value="">Select upload…</option>
+                {uploads.map(u => (
+                  <option key={u._id} value={u._id}>
+                    {u.filename} · {u.rowCount} rows ({new Date(u.uploadDate).toLocaleDateString()})
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+          <button
+            onClick={handleCompare}
+            disabled={loading || !prevId || !currId}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40 transition"
+          >
+            {loading ? "Comparing…" : "▶ Run Comparison"}
+          </button>
         </div>
       </div>
 
@@ -169,10 +194,12 @@ export default function UploadPage({
             <span className="ml-2 text-gray-300 font-normal normal-case">{uploads.length} files</span>
           </p>
           <div className="space-y-2">
-            {uploads.map((u) => (
+            {uploads.map(u => (
               <div key={u._id} className="flex justify-between items-center bg-gray-50 rounded-lg px-3 py-2.5 hover:bg-gray-100 transition">
                 <div className="flex items-center gap-3">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${u.label === "current" ? "bg-blue-100 text-blue-700" : "bg-gray-200 text-gray-600"}`}>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                    u.label === "current" ? "bg-blue-100 text-blue-700" : "bg-gray-200 text-gray-600"
+                  }`}>
                     {u.label}
                   </span>
                   <div>

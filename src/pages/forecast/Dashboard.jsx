@@ -12,42 +12,42 @@ export default function Dashboard({ allRows, prevFile, currFile, search = "" }) 
   }
 
   const filtered = search
-    ? allRows.filter((r) =>
+    ? allRows.filter(r =>
         r.partNo.toLowerCase().includes(search.toLowerCase()) ||
         r.customer.toLowerCase().includes(search.toLowerCase())
       )
     : allRows;
 
   const topIncreases = [...filtered]
-    .map((r) => {
-      const maxPct = Math.max(...r.monthData.map((md) => md.pct));
-      const bestMonth = r.monthData.find((md) => md.pct === maxPct);
+    .map(r => {
+      const maxPct = Math.max(...r.monthData.map(md => md.pct));
+      const bestMonth = r.monthData.find(md => md.pct === maxPct);
       const totalPct = calcTotalPct(r);
       return { ...r, maxPct, bestMonth, totalPct };
     })
-    .filter((r) => r.totalPct > 0 && (!filterNew || !(r.maxPct === 100 && r.bestMonth?.prev === 0)))
+    .filter(r => r.totalPct > 0 && (!filterNew || !(r.maxPct === 100 && r.bestMonth?.prev === 0)))
     .sort((a, b) => b.totalPct - a.totalPct)
     .slice(0, 200);
 
   const topDrops = [...filtered]
-    .map((r) => {
-      const minPct = Math.min(...r.monthData.map((md) => md.pct));
-      const worstMonth = r.monthData.find((md) => md.pct === minPct);
+    .map(r => {
+      const minPct = Math.min(...r.monthData.map(md => md.pct));
+      const worstMonth = r.monthData.find(md => md.pct === minPct);
       const totalPct = calcTotalPct(r);
       return { ...r, minPct, worstMonth, totalPct };
     })
-    .filter((r) => r.totalPct < 0 && (!filterNew || !(r.minPct === -100 && r.worstMonth?.curr === 0)))
+    .filter(r => r.totalPct < 0 && (!filterNew || !(r.minPct === -100 && r.worstMonth?.curr === 0)))
     .sort((a, b) => a.totalPct - b.totalPct)
     .slice(0, 50);
 
   const noChange = [...filtered]
-    .map((r) => {
+    .map(r => {
       const totalPrev = r.monthData.reduce((s, md) => s + md.prev, 0);
       const totalCurr = r.monthData.reduce((s, md) => s + md.curr, 0);
       const totalPct = calcTotalPct(r);
       return { ...r, totalPct, totalPrev, totalCurr };
     })
-    .filter((r) => r.totalPct === 0 && r.totalPrev > 0 && r.totalCurr > 0)
+    .filter(r => r.totalPct === 0 && r.totalPrev > 0 && r.totalCurr > 0)
     .sort((a, b) => b.totalPrev - a.totalPrev);
 
   const maxIncrease = topIncreases[0]?.totalPct || 100;
@@ -67,7 +67,7 @@ export default function Dashboard({ allRows, prevFile, currFile, search = "" }) 
             </h3>
           </div>
           <button
-            onClick={() => setFilterNew((v) => !v)}
+            onClick={() => setFilterNew(v => !v)}
             className={`text-xs px-2 py-0.5 rounded-full border transition font-medium ${
               filterNew ? "bg-blue-50 border-blue-200 text-blue-600" : "bg-gray-50 border-gray-200 text-gray-400"
             }`}

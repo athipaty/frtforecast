@@ -91,35 +91,6 @@ export default function StockMonitor() {
         ))}
       </div>
 
-      {/* Upload status bar */}
-      {status?.hasData && tab === "upload" && (
-        <div className="bg-white border border-gray-200 rounded-xl px-4 py-3">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Upload Status</p>
-          <div className="flex gap-4 flex-wrap">
-            {[
-              { label: "Mapping", count: status.mapping, color: "text-purple-600" },
-              { label: "Current Stock", count: status.currentStock, color: "text-blue-600" },
-              { label: "Incoming", count: status.incomingStock, color: "text-green-600" },
-              { label: "PO Confirmed", count: status.poConfirmed, color: "text-orange-600" },
-              { label: "Forecast", count: status.forecast, color: "text-gray-500" },
-            ].map(({ label, count, color }) => (
-              <div key={label} className="flex items-center gap-1.5">
-                <span className={`text-sm font-bold ${count > 0 ? color : 'text-gray-300'}`}>
-                  {count > 0 ? "✓" : "○"}
-                </span>
-                <span className="text-xs text-gray-500">{label}</span>
-                {count > 0 && <span className="text-xs text-gray-400">({count})</span>}
-              </div>
-            ))}
-          </div>
-          {!canCalculate && (
-            <p className="text-xs text-amber-500 mt-2">
-              ⚠ Upload mapping, current stock, and at least PO or forecast to run calculation
-            </p>
-          )}
-        </div>
-      )}
-
       {/* Tab content */}
       {tab === "upload" && (
         <StockUpload status={status} onRefresh={fetchStatus} />

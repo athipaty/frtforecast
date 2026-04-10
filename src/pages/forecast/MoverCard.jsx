@@ -25,7 +25,7 @@ export default function MoverCard({ r, pct, month, diff, units, maxPct, isIncrea
             {isIncrease ? "+" : ""}{totalPct}%
           </span>
           <button
-            onClick={() => setExpanded((v) => !v)}
+            onClick={() => setExpanded(v => !v)}
             className="text-xs text-gray-400 hover:text-gray-600 border border-gray-200 rounded px-2 py-0.5 transition"
           >
             {expanded ? "▲ hide" : "▼ detail"}
@@ -35,7 +35,7 @@ export default function MoverCard({ r, pct, month, diff, units, maxPct, isIncrea
 
       <div className={`w-full rounded-full h-1.5 ${isIncrease ? "bg-blue-50" : "bg-red-50"}`}>
         <div
-          className={`h-1.5 rounded-full bar-animate ${isIncrease ? "bg-blue-500" : "bg-red-400"}`}
+          className={`h-1.5 rounded-full ${isIncrease ? "bg-blue-500" : "bg-red-400"}`}
           style={{ width: `${Math.min((Math.abs(totalPct) / maxPct) * 100, 100)}%` }}
         />
       </div>
@@ -45,10 +45,7 @@ export default function MoverCard({ r, pct, month, diff, units, maxPct, isIncrea
       </div>
 
       {expanded && (
-        <div
-          className="mt-2 border-t border-gray-100 pt-2 overflow-x-auto"
-          style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0 }}
-        >
+        <div className="mt-2 border-t border-gray-100 pt-2 overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-100">
@@ -65,11 +62,7 @@ export default function MoverCard({ r, pct, month, diff, units, maxPct, isIncrea
             </thead>
             <tbody>
               {r.monthData.map((md, i) => (
-                <tr
-                  key={i}
-                  className="border-b border-gray-50 last:border-0"
-                  style={{ animation: "fadeIn 0.3s ease forwards", opacity: 0, animationDelay: `${i * 0.04}s` }}
-                >
+                <tr key={i} className="border-b border-gray-50 last:border-0">
                   <td className="py-1 text-gray-600 font-medium">{md.month}</td>
                   <td className="py-1 text-right text-gray-400">{md.prev ? md.prev.toLocaleString() : "—"}</td>
                   <td className="py-1 text-right text-gray-700 font-medium">{md.curr ? md.curr.toLocaleString() : "—"}</td>

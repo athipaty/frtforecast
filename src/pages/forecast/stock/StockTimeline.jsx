@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const LABEL_W = 220;
+const STOCK_W = 80;
 const COL_W = 80;
 
 export default function StockTimeline({ weeks, parts }) {
@@ -27,7 +28,7 @@ export default function StockTimeline({ weeks, parts }) {
     return `${n} weeks`;
   }
 
-  const tableMinWidth = LABEL_W + weeks.length * COL_W;
+  const tableMinWidth = LABEL_W + STOCK_W + weeks.length * COL_W;
 
   return (
     <div className="space-y-4">
@@ -80,6 +81,7 @@ export default function StockTimeline({ weeks, parts }) {
         >
           <colgroup>
             <col style={{ width: `${LABEL_W}px` }} />
+            <col style={{ width: `${STOCK_W}px` }} />
             {weeks.map((_, i) => (
               <col key={i} style={{ width: `${COL_W}px` }} />
             ))}
@@ -88,6 +90,9 @@ export default function StockTimeline({ weeks, parts }) {
             <tr className="bg-gray-50 border-b border-gray-100">
               <th className="text-left px-3 py-2.5 text-gray-500 font-medium">
                 Part No
+              </th>
+              <th className="text-right px-3 py-2.5 text-gray-500 font-medium">
+                Stock
               </th>
               {weeks.map((wk) => (
                 <th
@@ -103,7 +108,7 @@ export default function StockTimeline({ weeks, parts }) {
             {filtered.length === 0 && (
               <tr>
                 <td
-                  colSpan={weeks.length + 1}
+                  colSpan={weeks.length + 2}
                   className="px-3 py-8 text-center text-gray-400"
                 >
                   {search ? "No parts match your search" : "No parts at risk"}
@@ -127,7 +132,7 @@ export default function StockTimeline({ weeks, parts }) {
 
 function SummaryRow({ part, weeks, weeksUntilLabel }) {
   const [expanded, setExpanded] = useState(false);
-  const tableMinWidth = LABEL_W + part.weeks.length * COL_W;
+  const tableMinWidth = LABEL_W + STOCK_W + part.weeks.length * COL_W;
 
   return (
     <>
@@ -149,6 +154,9 @@ function SummaryRow({ part, weeks, weeksUntilLabel }) {
             )}
           </div>
         </td>
+        <td className="px-3 py-2.5 text-right font-semibold text-gray-700">
+          {part.currentStock.toLocaleString()}
+        </td>
         {part.weeks.map((wk, j) => (
           <td
             key={j}
@@ -168,7 +176,7 @@ function SummaryRow({ part, weeks, weeksUntilLabel }) {
       {/* Expanded detail */}
       {expanded && (
         <tr className="border-b border-gray-200">
-          <td colSpan={weeks.length + 1} className="p-0 m-0">
+          <td colSpan={weeks.length + 2} className="p-0 m-0">
             <div
               className="bg-gray-50 border-t-2 border-blue-100 overflow-x-auto"
               style={{ marginLeft: 0, paddingLeft: 0 }}
@@ -184,19 +192,36 @@ function SummaryRow({ part, weeks, weeksUntilLabel }) {
               >
                 <colgroup>
                   <col style={{ width: `${LABEL_W}px` }} />
+                  <col style={{ width: `${STOCK_W}px` }} />
                   {part.weeks.map((_, i) => (
                     <col key={i} style={{ width: `${COL_W}px` }} />
                   ))}
                 </colgroup>
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left px-3 py-2 bg-gray-50">
-                      <span className="text-xs text-gray-400 font-normal">
-                        Initial stock{" "} : 
-                      </span>
-                      <span className="text-xs font-bold text-gray-700"> 
-                        {part.currentStock.toLocaleString()} <span>pcs</span>
-                      </span>
+                    <th className="text-left px-3 py-2 text-gray-400 font-medium bg-gray-50"></th>
+                    <th className="text-right px-3 py-2 bg-gray-50">
+                      <div className="space-y-0.5">
+                        {[
+                          ...new Set(
+                            part.weeks
+                              .flatMap((wk) =>
+                                (wk.poDetail || []).map((d) => d.customer),
+                              )
+                              .filter(Boolean),
+                          ),
+                        ].map((c, i) => (
+                          <div
+                            key={i}
+                            className="text-xs text-orange-600 font-medium truncate"
+                          >
+                            {c}
+                          </div>
+                        ))}
+                        {part.weeks.every(
+                          (wk) => !wk.poDetail || wk.poDetail.length === 0,
+                        ) && <span className="text-xs text-gray-300">—</span>}
+                      </div>
                     </th>
                     {part.weeks.map((wk, i) => (
                       <th
@@ -216,62 +241,12 @@ function SummaryRow({ part, weeks, weeksUntilLabel }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* PO row */}
-                  <tr className="border-b border-gray-100">
-                    <td className="px-3 py-2 bg-gray-50">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0"></span>
-                        <span className="text-gray-500 font-semibold">
-                          PO Confirmed
-                        </span>
-                      </div>
-                    </td>
-                    {part.weeks.map((wk, i) => (
-                      <td
-                        key={i}
-                        className={`px-2 py-2 text-right border-l border-gray-100 ${wk.shortage ? "bg-red-50" : "bg-white"}`}
-                      >
-                        {wk.demand > 0 && wk.demandType === "po" ? (
-                          <span className="text-blue-600 font-medium">
-                            -{wk.demand.toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-gray-300">—</span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Forecast row */}
-                  <tr>
-                    <td className="px-3 py-2 bg-gray-50">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0"></span>
-                        <span className="text-gray-500 font-semibold">
-                          Forecast
-                        </span>
-                      </div>
-                    </td>
-                    {part.weeks.map((wk, i) => (
-                      <td
-                        key={i}
-                        className={`px-2 py-2 text-right border-l border-gray-100 ${wk.shortage ? "bg-red-50" : "bg-white"}`}
-                      >
-                        {wk.demand > 0 && wk.demandType === "forecast" ? (
-                          <span className="text-gray-500 font-medium">
-                            -{wk.demand.toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-gray-300">—</span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
                   {/* Incoming row */}
                   <tr className="border-b border-gray-100">
                     <td className="px-3 py-2 text-gray-500 font-semibold bg-gray-50">
                       Incoming
                     </td>
+                    <td className="px-3 py-2 bg-gray-50"></td>
                     {part.weeks.map((wk, i) => (
                       <td
                         key={i}
@@ -298,6 +273,7 @@ function SummaryRow({ part, weeks, weeksUntilLabel }) {
                         </span>
                       </div>
                     </td>
+                    <td className="px-3 py-2 bg-gray-50"></td>
                     {part.weeks.map((wk, i) => (
                       <td
                         key={i}
@@ -320,6 +296,60 @@ function SummaryRow({ part, weeks, weeksUntilLabel }) {
                               </div>
                             ))}
                           </div>
+                        ) : (
+                          <span className="text-gray-300">—</span>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+
+                  {/* PO row */}
+                  <tr className="border-b border-gray-100">
+                    <td className="px-3 py-2 bg-gray-50">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0"></span>
+                        <span className="text-gray-500 font-semibold">
+                          PO Confirmed
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 bg-gray-50"></td>
+                    {part.weeks.map((wk, i) => (
+                      <td
+                        key={i}
+                        className={`px-2 py-2 text-right border-l border-gray-100 ${wk.shortage ? "bg-red-50" : "bg-white"}`}
+                      >
+                        {wk.demand > 0 && wk.demandType === "po" ? (
+                          <span className="text-blue-600 font-medium">
+                            -{wk.demand.toLocaleString()}
+                          </span>
+                        ) : (
+                          <span className="text-gray-300">—</span>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+
+                  {/* Forecast row */}
+                  <tr>
+                    <td className="px-3 py-2 bg-gray-50">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0"></span>
+                        <span className="text-gray-500 font-semibold">
+                          Forecast
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 bg-gray-50"></td>
+                    {part.weeks.map((wk, i) => (
+                      <td
+                        key={i}
+                        className={`px-2 py-2 text-right border-l border-gray-100 ${wk.shortage ? "bg-red-50" : "bg-white"}`}
+                      >
+                        {wk.demand > 0 && wk.demandType === "forecast" ? (
+                          <span className="text-gray-500 font-medium">
+                            -{wk.demand.toLocaleString()}
+                          </span>
                         ) : (
                           <span className="text-gray-300">—</span>
                         )}
